@@ -23,15 +23,18 @@ jobs:
         docker build . --file Dockerfile --tag $IMAGE_NAME:$TIMESTAMP
         docker tag $IMAGE_NAME:$TIMESTAMP $IMAGE_NAME:latest
         echo $IMAGE_NAME:$TIMESTAMP > image_name.txt
+        echo $IMAGE_NAME:latest > latest_image_name.txt
 
     - name: Debug output
       run: |
         echo "Image name with timestamp: $(cat image_name.txt)"
-        echo "Image name latest: $IMAGE_NAME:latest"
+        echo "Image name latest: $(cat latest_image_name.txt)"
 
     - name: Push the Docker image
       run: |
-        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/somochkin-blog
-        TIMESTAMP=$(cat image_name.txt)
-        docker push $IMAGE_NAME:$TIMESTAMP
-        docker push $IMAGE_NAME:latest
+        IMAGE_NAME=$(cat image_name.txt)
+        LATEST_IMAGE_NAME=$(cat latest_image_name.txt)
+        echo "Pushing image $IMAGE_NAME"
+        docker push $IMAGE_NAME
+        echo "Pushing image $LATEST_IMAGE_NAME"
+        docker push $LATEST_IMAGE_NAME
