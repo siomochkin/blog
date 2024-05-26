@@ -1,8 +1,16 @@
 # Build stage
 FROM ghcr.io/getzola/zola:v0.17.1 as zola
 
-COPY . /project
 WORKDIR /project
+COPY . .
+
+# Ensure Git is available
+RUN apt-get update && apt-get install -y git
+
+# Initialize and update submodules
+RUN git submodule update --init --recursive
+
+# Build the site
 RUN ["zola", "build"]
 
 # Serve stage
